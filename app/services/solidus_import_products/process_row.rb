@@ -39,7 +39,7 @@ module SolidusImportProducts
         product_imports.add_product(product)
       end
 
-      SolidusImportProducts::CreateVariant.call(product: product, product_information: product_information)
+      # SolidusImportProducts::CreateVariant.call(product: product, product_information: product_information)
     end
 
     private
