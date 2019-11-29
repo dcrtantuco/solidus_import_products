@@ -31,6 +31,7 @@ module SolidusImportProducts
         if skus_of_products_before_import.include?(product_information[:attributes][:sku])
           raise SolidusImportProducts::Exception::ProductError, "SKU #{product_information[:attributes][:sku]} exists, but #{variant_field}: #{row[variant_column]} not exists!! "
         end
+
         product = Spree::Product.new
       end
 
@@ -40,6 +41,7 @@ module SolidusImportProducts
       end
 
       # SolidusImportProducts::CreateVariant.call(product: product, product_information: product_information)
+      SolidusImportProducts::CreateProductStore.new(product.id, 'pops').call
     end
 
     private
@@ -68,7 +70,9 @@ module SolidusImportProducts
     end
 
     def product_information_default_values
-      product_information[:attributes][:available_on] = Time.zone.today - 1.day if product_information[:attributes][:available_on].nil?
+      if product_information[:attributes][:available_on].nil?
+        product_information[:attributes][:available_on] = Time.zone.today - 1.day
+      end
 
       if product_information[:attributes][:shipping_category_id].nil?
         sc = Spree::ShippingCategory.first
@@ -82,6 +86,7 @@ module SolidusImportProducts
     # We want to get a format with dot as decimal separator and without thousand separator
     def convert_to_price(price_str)
       raise SolidusImportProducts::Exception::InvalidPrice unless price_str
+
       punt = price_str.index('.')
       coma = price_str.index(',')
       if !coma.nil? && !punt.nil?
