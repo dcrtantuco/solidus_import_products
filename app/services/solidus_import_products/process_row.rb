@@ -38,10 +38,10 @@ module SolidusImportProducts
       unless product_imports.product?(product)
         create_or_update_product(product)
         product_imports.add_product(product)
+        SolidusImportProducts::CreateProductStore.new(product.id, 'pops').call
       end
 
       # SolidusImportProducts::CreateVariant.call(product: product, product_information: product_information)
-      SolidusImportProducts::CreateProductStore.new(product.id, 'pops').call
     end
 
     private
